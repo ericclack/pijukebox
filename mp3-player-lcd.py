@@ -83,8 +83,16 @@ def shutdown():
 
 def are_we_shutting_down():
     """Call after pause button pressed"""
-    time.sleep(0.5)
-    if lcd.is_pressed(LCD.SELECT):        
+
+    # Wait 1/2 second before displaying the message provided
+    # select key is held
+    select_duration = 0
+    while lcd.is_pressed(LCD.SELECT) and select_duration < 10:
+        select_duration += 1
+        print(select_duration)
+        time.sleep(0.05)
+        
+    if select_duration >= 10:
         lcd_display("Keep pressing to shutdown!")
         time.sleep(2)
         if lcd.is_pressed(LCD.SELECT):
@@ -95,7 +103,7 @@ def are_we_shutting_down():
 lcd.set_backlight(1)
 lcd_display("Checking for new songs...")
 check_for_new_songs()
-mpc("volume 90")
+mpc("volume 80")
 mpc("repeat on")
 pick_random_first_song()
 mpc("pause")
