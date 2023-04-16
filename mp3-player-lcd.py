@@ -7,10 +7,8 @@ import Adafruit_CharLCD as LCD
 # https://learn.adafruit.com/adafruits-raspberry-pi-lesson-4-gpio-setup/configuring-i2c
 
 # Halt or just quit this program?
-REALLY_HALT = True
-if 'SUDO_UID' in os.environ or 'TERM' in os.environ:
-    print "Won't really halt -- running as sudo / from term"
-    REALLY_HALT = False
+INTERACTIVE = 'SUDO_UID' in os.environ or 'TERM' in os.environ
+if INTERACTIVE: print "Won't really halt -- running as sudo / from term"
 
 lcd = LCD.Adafruit_CharLCDPlate()
 
@@ -27,8 +25,6 @@ def check_for_new_songs():
 
 def lcd_display(m):
     lcd.clear()
-    if m.find('Forever More') != -1:
-        m = 'Moloko - Endless cheese'
     # Wrap long messages
     if len(m)>16:
         m = m[:16] + "\n" + m[16:]
@@ -76,7 +72,7 @@ def shutdown():
     lcd.set_backlight(0)
     lcd_display("")
     time.sleep(1)
-    if REALLY_HALT: 
+    if not INTERACTIVE: 
         os.system('/sbin/halt')
         time.sleep(5)
     sys.exit()
@@ -89,7 +85,6 @@ def are_we_shutting_down():
     select_duration = 0
     while lcd.is_pressed(LCD.SELECT) and select_duration < 10:
         select_duration += 1
-        print(select_duration)
         time.sleep(0.05)
         
     if select_duration >= 10:
