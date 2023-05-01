@@ -1,5 +1,5 @@
 import time
-import os
+import subprocess
 import RPi.GPIO as IO
 
 PLAYER = "/usr/bin/mpc"
@@ -7,10 +7,10 @@ LAST_EVENT = 0
 BUTTON_BOUNCE_GAP = 0.5 #seconds
 
 def mpc(command):
-    os.system('mpc %s' % command)
+    return subprocess.check_output('mpc %s' % command, shell=True)
 
 def mpc_add_all_to_playlist():
-    os.system('mpc ls | mpc add')
+    subprocess.check_output('mpc ls | mpc add', shell=True)
 
 def set_up_playlist():
     mpc('clear')
@@ -25,10 +25,10 @@ def button_bounce():
 
 def next_track():
     mpc('play')
-    mpc('next')
+    print(mpc('next'))
 
 def prev_track():
-    mpc('prev')
+    print(mpc('prev'))
     
 def button_callback(channel):
     global LAST_EVENT
